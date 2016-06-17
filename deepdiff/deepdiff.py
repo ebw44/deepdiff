@@ -274,7 +274,7 @@ class DeepDiff(dict):
         self.update({"type_changes": {}, "dic_item_added": set([]), "dic_item_removed": set([]),
                      "values_changed": {}, "unprocessed": [], "iterable_item_added": {}, "iterable_item_removed": {},
                      "attribute_added": set([]), "attribute_removed": set([]), "set_item_removed": set([]),
-                     "set_item_added": set([]), "repetition_change": {}})
+                     "set_item_added": set([]), "repetition_change": {}, "possible_dic_keys_changed": {}})
 
         self.__diff(t1, t2, parents_ids=frozenset({id(t1)}))
 
@@ -341,6 +341,9 @@ class DeepDiff(dict):
         if t_keys_removed:
             self.__extend_result_list(keys=t_keys_removed, parent=parent,
                                       result_obj=self[item_removed_key], print_as_attribute=print_as_attribute)
+            
+        if len(t_keys_removed) > 0 and len(t_keys_removed) == len(t_keys_added):
+            self["possible_dic_keys_changed"][parent] = {"oldvalue": t_keys_removed, "newvalue": t_keys_added}
 
         self.__diff_common_children(
             t1, t2, t_keys_intersect, print_as_attribute, parents_ids, parent, parent_text)
